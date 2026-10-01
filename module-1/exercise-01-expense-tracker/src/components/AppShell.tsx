@@ -8,11 +8,16 @@ import { Nav } from "./Nav";
 import { Modal } from "./Modal";
 import { ExpenseForm } from "./ExpenseForm";
 import { ErrorBanner } from "./States";
+import { ExportCenter } from "./export/ExportCenter";
+import { defaultOptions } from "@/lib/export/selection";
+import type { ExportOptions } from "@/lib/export/types";
 
 interface EditorContextValue {
   openAdd: () => void;
   openEdit: (e: Expense) => void;
   remove: (e: Expense) => void;
+  /** Opens the export drawer, optionally pre-filled (e.g. from the list filters). */
+  openExport: (preset?: Partial<ExportOptions>) => void;
 }
 
 const EditorContext = createContext<EditorContextValue | null>(null);
@@ -39,11 +44,18 @@ function Shell({ children }: { children: React.ReactNode }) {
   // undefined = closed, null = adding, Expense = editing
   const [editing, setEditing] = useState<Expense | null | undefined>(undefined);
   const close = useCallback(() => setEditing(undefined), []);
+  const [exportOpen, setExportOpen] = useState(false);
+  const [exportInitial, setExportInitial] = useState<ExportOptions>(() => defaultOptions());
+  const closeExport = useCallback(() => setExportOpen(false), []);
 
   const editor = useMemo<EditorContextValue>(
     () => ({
       openAdd: () => setEditing(null),
       openEdit: (e) => setEditing(e),
+      openExport: (preset) => {
+        setExportInitial({ ...defaultOptions(), ...preset });
+        setExportOpen(true);
+      },
       remove: (e) => {
         const removed = deleteExpense(e.id);
         if (removed) {
@@ -83,6 +95,7 @@ function Shell({ children }: { children: React.ReactNode }) {
           />
         )}
       </Modal>
+      <ExportCenter open={exportOpen} initial={exportInitial} onClose={closeExport} />
     </EditorContext.Provider>
   );
 }

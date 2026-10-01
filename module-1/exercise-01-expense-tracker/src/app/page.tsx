@@ -15,7 +15,7 @@ import { generateSampleExpenses } from "@/lib/sampleData";
 
 export default function DashboardPage() {
   const { expenses, loading, addMany } = useExpenses();
-  const { openAdd, openEdit, remove } = useEditor();
+  const { openAdd, openEdit, remove, openExport } = useEditor();
   const toast = useToast();
 
   const today = todayISO();
@@ -25,9 +25,14 @@ export default function DashboardPage() {
 
   return (
     <>
-      <div>
-        <h1 className="text-2xl font-semibold tracking-tight">Dashboard</h1>
-        <p className="text-sm text-slate-500">An overview of where your money goes.</p>
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+        <div>
+          <h1 className="text-2xl font-semibold tracking-tight">Dashboard</h1>
+          <p className="text-sm text-slate-500">An overview of where your money goes.</p>
+        </div>
+        <button className="btn-secondary" onClick={() => openExport()} disabled={loading || expenses.length === 0}>
+          <span aria-hidden>⇩</span> Export data…
+        </button>
       </div>
 
       {loading ? (

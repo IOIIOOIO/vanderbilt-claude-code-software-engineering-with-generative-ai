@@ -2,20 +2,17 @@
 
 import { useMemo, useState } from "react";
 import { useExpenses } from "@/hooks/useExpenses";
-import { useToast } from "@/hooks/useToast";
 import { useEditor } from "@/components/AppShell";
 import { FilterBar } from "@/components/FilterBar";
 import { ExpenseList } from "@/components/ExpenseList";
 import { EmptyState, Skeleton } from "@/components/States";
 import { filterExpenses, sortExpenses, sum } from "@/lib/analytics";
-import { downloadCSV } from "@/lib/csv";
-import { formatCurrency, todayISO } from "@/lib/format";
-import { EMPTY_FILTERS, type ExpenseFilters } from "@/lib/types";
+import { formatCurrency } from "@/lib/format";
+import { CATEGORIES, EMPTY_FILTERS, type ExpenseFilters } from "@/lib/types";
 
 export default function ExpensesPage() {
   const { expenses, loading } = useExpenses();
-  const { openAdd, openEdit, remove } = useEditor();
-  const toast = useToast();
+  const { openAdd, openEdit, remove, openExport } = useEditor();
   const [filters, setFilters] = useState<ExpenseFilters>(EMPTY_FILTERS);
 
   const visible = useMemo(
@@ -23,14 +20,13 @@ export default function ExpensesPage() {
     [expenses, filters],
   );
 
-  const exportCSV = () => {
-    try {
-      downloadCSV(visible, `expenses-${todayISO()}.csv`);
-      toast(`Exported ${visible.length} expense${visible.length === 1 ? "" : "s"} to CSV.`);
-    } catch {
-      toast("Export failed. Please try again.", "error");
-    }
-  };
+  // Carry the list's category/date filters into the export drawer.
+  const openExportWithFilters = () =>
+    openExport({
+      from: filters.from,
+      to: filters.to,
+      categories: filters.category === "All" ? [...CATEGORIES] : [filters.category],
+    });
 
   return (
     <>
@@ -39,8 +35,8 @@ export default function ExpensesPage() {
           <h1 className="text-2xl font-semibold tracking-tight">Expenses</h1>
           <p className="text-sm text-slate-500">Search, filter, edit and export your expenses.</p>
         </div>
-        <button className="btn-secondary" onClick={exportCSV} disabled={loading || visible.length === 0}>
-          ⬇ Export CSV
+        <button className="btn-secondary" onClick={openExportWithFilters} disabled={loading || expenses.length === 0}>
+          <span aria-hidden>⇩</span> Export…
         </button>
       </div>
 

@@ -1,7 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { validateExpense } from "./validation";
 import { filterExpenses, monthlyTotals, sortExpenses, summarize, totalsByCategory } from "./analytics";
-import { toCSV } from "./csv";
 import { parseExpenses } from "./storage";
 import { formatCurrency } from "./format";
 import { EMPTY_FILTERS, type Expense } from "./types";
@@ -86,19 +85,6 @@ describe("analytics", () => {
       { month: "2026-01", total: 0 },
       { month: "2026-02", total: 0 },
     ]);
-  });
-});
-
-describe("toCSV", () => {
-  it("escapes commas, quotes and formula prefixes", () => {
-    const csv = toCSV([
-      exp({ description: 'Dinner, "fancy"', amount: 3 }),
-      exp({ description: "=SUM(A1)", amount: 4.5 }),
-    ]);
-    const lines = csv.split("\r\n");
-    expect(lines[0]).toBe("Date,Category,Description,Amount");
-    expect(lines[1]).toBe('2026-10-01,Food,"Dinner, ""fancy""",3.00');
-    expect(lines[2]).toBe("2026-10-01,Food,'=SUM(A1),4.50");
   });
 });
 

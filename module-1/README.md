@@ -4,4 +4,6 @@ Exercises for Module 1 of "Claude Code: Software Engineering with Generative AI 
 
 ## Exercises
 
-_None yet. Each exercise will get its own subdirectory here (e.g. `exercise-01-<short-name>/`)._
+| # | Exercise | Summary |
+| --- | --- | --- |
+| 1 | [exercise-01-expense-tracker](exercise-01-expense-tracker/) | Next.js 14 + TypeScript + Tailwind expense tracker built from one detailed prompt |

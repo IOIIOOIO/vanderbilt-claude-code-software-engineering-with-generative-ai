@@ -36,6 +36,46 @@
 - **Responsive:** a table on desktop, stacked cards on mobile. The add/edit modal opens as a
   bottom sheet on phones.
 
+## Data export, version 3 (branch `feature-data-export-v3`)
+
+A **Share & Sync** page at `/share`, designed like a SaaS integrations hub. It has four tabs:
+**Export & share**, **Integrations**, **Automations** and **Activity**.
+
+- **Templates:** Tax Report (year to date, with subtotals by category), Monthly Summary (a
+  12-month table of months against categories), Category Analysis (count, total, average, share
+  and largest expense) and Full Backup (JSON you could restore from). All are built from real
+  data and covered by unit tests.
+- **Destinations:** Download, Email, Google Sheets, Google Drive, Dropbox, OneDrive, Notion,
+  Slack and Webhook. Services that need an account go through a simulated sign-in: a "redirecting"
+  screen, then a consent screen listing what Spendwise could access.
+- **Background tasks:** a floating panel shows each export moving through its stages, such as
+  Generating, Uploading and Verifying, then completing or failing.
+- **Google Sheets mockup:** finishing an export opens a spreadsheet-style window filled with the
+  data that would be written.
+- **Email:** recipients as removable chips with address checking, plus a subject, a message, an
+  attachment preview and a delivery confirmation.
+- **Share links and QR codes:** these actually work. The report is compressed and stored in the
+  part of the URL after `#`, which browsers never send to a server. The `/shared` page shows a
+  read-only view of it, with an expiry date, a note and a CSV download.
+- **Automations:** daily, weekly or monthly exports with a plain-English summary, the next run
+  time, pause and resume, and **Run now**. Runs missed while the app was closed happen on your
+  next visit.
+- **Auto-sync:** a storage service can keep a backup that updates a few seconds after each edit.
+  The nav shows the status: Local only, Syncing…, Synced 2m ago or Offline.
+- **Activity history:** a timeline that is saved between visits, with filters, a success rate,
+  the total data sent, re-run and retry buttons, and **Open sheet**.
+- **Backup health:** a warning appears when your data has never been backed up, with a link to
+  schedule backups.
+- **Offline:** exports to online services fail cleanly with a "You're offline" message, and the
+  tabs still work offline.
+
+**How it's built:**
+- `src/lib/cloud/` holds the templates, the destination list, the schedule maths and the
+  share-link encoding. None of it uses React, and it's covered by unit tests.
+- `src/hooks/useCloud.tsx` runs the export jobs, the scheduler and auto-sync.
+- The integrations are simulated: nothing leaves the browser except through share links you
+  create.
+
 ## Run it
 
 Requires Node 18.17+.

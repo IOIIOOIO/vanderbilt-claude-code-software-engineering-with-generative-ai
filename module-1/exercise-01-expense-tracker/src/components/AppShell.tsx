@@ -8,6 +8,9 @@ import { Nav } from "./Nav";
 import { Modal } from "./Modal";
 import { ExpenseForm } from "./ExpenseForm";
 import { ErrorBanner } from "./States";
+import { usePathname } from "next/navigation";
+import { CloudProvider } from "@/hooks/useCloud";
+import { ActivityTray } from "./cloud/ActivityTray";
 
 interface EditorContextValue {
   openAdd: () => void;
@@ -24,10 +27,15 @@ export function useEditor(): EditorContextValue {
 }
 
 export function AppShell({ children }: { children: React.ReactNode }) {
+  // Public share links render standalone: no nav, and none of the owner's data is loaded.
+  if (usePathname().startsWith("/shared")) return <>{children}</>;
   return (
     <ToastProvider>
       <ExpensesProvider>
-        <Shell>{children}</Shell>
+        <CloudProvider>
+          <Shell>{children}</Shell>
+          <ActivityTray />
+        </CloudProvider>
       </ExpensesProvider>
     </ToastProvider>
   );

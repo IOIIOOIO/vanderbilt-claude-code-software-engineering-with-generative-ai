@@ -96,9 +96,9 @@ describe("toCSV", () => {
       exp({ description: "=SUM(A1)", amount: 4.5 }),
     ]);
     const lines = csv.split("\r\n");
-    expect(lines[0]).toBe("Date,Category,Description,Amount");
-    expect(lines[1]).toBe('2026-10-01,Food,"Dinner, ""fancy""",3.00');
-    expect(lines[2]).toBe("2026-10-01,Food,'=SUM(A1),4.50");
+    expect(lines[0]).toBe("Date,Category,Amount,Description");
+    expect(lines[1]).toBe('2026-10-01,Food,3.00,"Dinner, ""fancy"""');
+    expect(lines[2]).toBe("2026-10-01,Food,4.50,'=SUM(A1)");
   });
 });
 

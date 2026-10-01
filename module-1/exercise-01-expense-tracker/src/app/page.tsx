@@ -10,6 +10,7 @@ import { CategoryDonut, MonthlyBars } from "@/components/Charts";
 import { ExpenseList } from "@/components/ExpenseList";
 import { EmptyState, Skeleton } from "@/components/States";
 import { monthlyTotals, sortExpenses, summarize } from "@/lib/analytics";
+import { downloadCSV } from "@/lib/csv";
 import { todayISO } from "@/lib/format";
 import { generateSampleExpenses } from "@/lib/sampleData";
 
@@ -25,9 +26,18 @@ export default function DashboardPage() {
 
   return (
     <>
-      <div>
-        <h1 className="text-2xl font-semibold tracking-tight">Dashboard</h1>
-        <p className="text-sm text-slate-500">An overview of where your money goes.</p>
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+        <div>
+          <h1 className="text-2xl font-semibold tracking-tight">Dashboard</h1>
+          <p className="text-sm text-slate-500">An overview of where your money goes.</p>
+        </div>
+        <button
+          className="btn-secondary"
+          disabled={loading || expenses.length === 0}
+          onClick={() => downloadCSV(sortExpenses(expenses), `expenses-${today}.csv`)}
+        >
+          Export Data
+        </button>
       </div>
 
       {loading ? (
